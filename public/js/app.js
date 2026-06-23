@@ -24,10 +24,6 @@ candidateForm.addEventListener("submit", async (event) => {
   candidateData = {
     ho_ten: document.getElementById("hoTen").value.trim(),
     so_dien_thoai: document.getElementById("soDienThoai").value.trim(),
-    dia_chi: document.getElementById("diaChi").value.trim(),
-    nam_sinh: document.getElementById("namSinh").value
-      ? Number(document.getElementById("namSinh").value)
-      : null,
   };
 
   if (!candidateData.ho_ten || !candidateData.so_dien_thoai) {
