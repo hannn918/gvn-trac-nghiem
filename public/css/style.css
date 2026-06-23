@@ -371,3 +371,53 @@ body {
   width: min(100%, 1200px);
   margin: 0 auto;
 }
+
+/* Nhóm 2 nút ở màn hình kết quả */
+.result-actions {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 24px;
+}
+
+/* CSS chung cho 2 nút */
+.result-actions button {
+  border: none;
+  border-radius: 10px;
+  padding: 12px 22px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Nút Xem chi tiết */
+#detailBtn {
+  background: #e8f6ed;
+  color: #12863f;
+  border: 1px solid #b8e2c6;
+}
+
+#detailBtn:hover {
+  background: #d5f0de;
+  transform: translateY(-2px);
+}
+
+/* Nút Làm bài lần nữa */
+#retryBtn {
+  background: #148a42;
+  color: #ffffff;
+  box-shadow: 0 6px 14px rgba(20, 138, 66, 0.22);
+}
+
+#retryBtn:hover {
+  background: #0d7334;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(20, 138, 66, 0.3);
+}
+
+#detailBtn:active,
+#retryBtn:active {
+  transform: translateY(0);
+}
