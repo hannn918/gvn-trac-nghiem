@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trắc nghiệm tuyển dụng - Giúp Việc Nhanh</title>
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div>
+        <p class="eyebrow">Giúp Việc Nhanh</p>
+        <h1>Bài test tuyển dụng</h1>
+        <p class="subtitle">Mỗi lần làm hệ thống random 10 câu trong bộ 100 câu. Đúng 8/10 là đậu.</p>
+      </div>
+      <div class="rule-box">
+        <strong>Điều kiện</strong>
+        <span>Đậu: ≥ 8 câu</span>
+        <span>Rớt: &lt; 8 câu</span>
+      </div>
+    </header>
+
+    <main>
+      <section id="infoSection" class="card">
+        <div class="section-title">
+          <span>01</span>
+          <div>
+            <h2>Thông tin ứng viên</h2>
+            <p>Ứng viên có thể làm nhiều lần. Mỗi lần sẽ được lưu thành một kết quả riêng.</p>
+          </div>
+        </div>
+
+        <form id="candidateForm" class="form-grid">
+          <label>
+            Họ tên <b>*</b>
+            <input type="text" id="hoTen" placeholder="Nhập họ tên" required />
+          </label>
+
+          <label>
+            Số điện thoại <b>*</b>
+            <input type="tel" id="soDienThoai" placeholder="Nhập số điện thoại" required />
+          </label>
+
+          <label>
+            Địa chỉ
+            <input type="text" id="diaChi" placeholder="Nhập địa chỉ" />
+          </label>
+
+          <label>
+            Năm sinh
+            <input type="number" id="namSinh" placeholder="Ví dụ: 1988" min="1950" max="2010" />
+          </label>
+
+          <button type="submit" class="primary-btn full">Bắt đầu làm bài</button>
+        </form>
+      </section>
+
+      <section id="quizSection" class="card hidden">
+        <div class="quiz-top">
+          <div class="section-title no-margin">
+            <span>02</span>
+            <div>
+              <h2>Làm bài trắc nghiệm</h2>
+              <p>Chọn 1 đáp án cho mỗi câu rồi bấm xác nhận kết quả.</p>
+            </div>
+          </div>
+          <div class="progress-pill"><span id="answeredCount">0</span>/10 đã chọn</div>
+        </div>
+
+        <div id="questionList" class="question-list"></div>
+
+        <div class="submit-bar">
+          <button id="submitBtn" class="primary-btn">Xác nhận kết quả</button>
+        </div>
+      </section>
+
+      <section id="resultSection" class="card result-card hidden">
+        <div id="resultBadge" class="result-badge">ĐẬU</div>
+        <h2 id="resultTitle">Kết quả bài làm</h2>
+        <p id="resultText"></p>
+        <div class="result-stats">
+          <div><strong id="correctText">0</strong><span>Câu đúng</span></div>
+          <div><strong id="wrongText">0</strong><span>Câu sai</span></div>
+          <div><strong id="scoreText">0</strong><span>Điểm</span></div>
+        </div>
+        <div class="result-actions">
+          <button id="retryBtn" class="primary-btn">Làm bài lần nữa</button>
+          <button id="detailBtn" class="secondary-btn">Xem chi tiết</button>
+        </div>
+      </section>
+
+      <section id="detailSection" class="card hidden">
+        <div class="section-title">
+          <span>03</span>
+          <div>
+            <h2>Chi tiết đúng / sai</h2>
+            <p>Xem lại câu nào đúng, câu nào sai.</p>
+          </div>
+        </div>
+        <div id="detailList" class="question-list"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>
