@@ -136,7 +136,9 @@ function renderQuestions() {
     questionList.appendChild(questionCard);
   });
 
+  if (answerCount) {
   answerCount.innerText = "0/10 đã chọn";
+}
 
   document.querySelectorAll(".answer-input").forEach((input) => {
     input.addEventListener("change", updateAnswerCount);
@@ -161,7 +163,9 @@ function renderAnswer(questionId, option, content) {
 
 function updateAnswerCount() {
   const selectedCount = getSelectedAnswers().length;
-  answerCount.innerText = `${selectedCount}/10 đã chọn`;
+  if (answerCount) {
+    answerCount.innerText = `${selectedCount}/10 đã chọn`;
+  }
 }
 
 function getSelectedAnswers() {
