@@ -2,9 +2,14 @@ const SUPABASE_URL = "https://vjxuyghzhgchdtncsrjn.supabase.co";
 const SUPABASE_KEY = "sb_publishable_6BJF9F_QQK5JOrEjw1dDHA_sCCc-tDm";
 
 let currentQuestions = [];
+let submittedAnswers = [];
 let candidateData = null;
 let candidateId = null;
 let latestResultId = null;
+
+let quizTimerInterval = null;
+let remainingSeconds = 10 * 60;
+let isSubmitted = false;
 
 const infoSection = document.getElementById("infoSection");
 const quizSection = document.getElementById("quizSection");
@@ -15,6 +20,7 @@ const candidateForm = document.getElementById("candidateForm");
 const questionList = document.getElementById("questionList");
 const submitBtn = document.getElementById("submitBtn");
 const answerCount = document.getElementById("answerCount");
+const quizTimer = document.getElementById("quizTimer");
 
 candidateForm.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -32,7 +38,7 @@ candidateForm.addEventListener("submit", async (event) => {
   await startQuiz();
 });
 
-submitBtn.addEventListener("click", submitQuiz);
+submitBtn.addEventListener("click", () => submitQuiz(false));
 
 async function supabaseRequest(path, options = {}) {
   const response = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
@@ -75,6 +81,8 @@ async function startQuiz() {
     );
 
     currentQuestions = shuffleArray(allQuestions).slice(0, 10);
+    submittedAnswers = [];
+    isSubmitted = false;
 
     if (currentQuestions.length < 10) {
       alert("Database chưa đủ 10 câu hỏi.");
@@ -87,6 +95,9 @@ async function startQuiz() {
     resultSection.classList.add("hidden");
     detailSection.classList.add("hidden");
     quizSection.classList.remove("hidden");
+
+    remainingSeconds = 10 * 60;
+    startQuizTimer();
   } catch (error) {
     alert(error.message);
   } finally {
@@ -94,6 +105,47 @@ async function startQuiz() {
     startBtn.disabled = false;
     startBtn.innerText = "Bắt đầu làm bài";
   }
+}
+
+function startQuizTimer() {
+  clearInterval(quizTimerInterval);
+  updateQuizTimer();
+
+  quizTimerInterval = setInterval(() => {
+    remainingSeconds--;
+    updateQuizTimer();
+
+    if (remainingSeconds <= 0) {
+      clearInterval(quizTimerInterval);
+
+      if (!isSubmitted) {
+        alert("Đã hết 10 phút. Hệ thống sẽ tự động nộp bài.");
+        submitQuiz(true);
+      }
+    }
+  }, 1000);
+}
+
+function updateQuizTimer() {
+  if (!quizTimer) return;
+
+  const minutes = Math.floor(remainingSeconds / 60);
+  const seconds = remainingSeconds % 60;
+
+  quizTimer.innerText = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+
+  quizTimer.classList.remove("warning", "danger");
+
+  if (remainingSeconds <= 60) {
+    quizTimer.classList.add("danger");
+  } else if (remainingSeconds <= 180) {
+    quizTimer.classList.add("warning");
+  }
+}
+
+function stopQuizTimer() {
+  clearInterval(quizTimerInterval);
+  quizTimerInterval = null;
 }
 
 function renderQuestions() {
@@ -121,7 +173,7 @@ function renderQuestions() {
   });
 
   if (answerCount) {
-    answerCount.innerText = "0/10 đã chọn";
+    answerCount.innerText = "0";
   }
 
   document.querySelectorAll(".answer-input").forEach((input) => {
@@ -149,7 +201,7 @@ function updateAnswerCount() {
   const selectedCount = getSelectedAnswers().length;
 
   if (answerCount) {
-    answerCount.innerText = `${selectedCount}/10 đã chọn`;
+    answerCount.innerText = selectedCount;
   }
 }
 
@@ -173,19 +225,48 @@ function getSelectedAnswers() {
     .filter(Boolean);
 }
 
-async function submitQuiz() {
+function getFullAnswers() {
   const selectedAnswers = getSelectedAnswers();
 
-  if (selectedAnswers.length < 10) {
+  return currentQuestions.map((question) => {
+    const selected = selectedAnswers.find(
+      (item) => item.id_cau_hoi === question.id
+    );
+
+    const dapAnChon = selected ? selected.dap_an_chon : null;
+
+    return {
+      id_cau_hoi: question.id,
+      dap_an_chon: dapAnChon,
+      dap_an_dung: question.dap_an_dung,
+      la_dung: dapAnChon === question.dap_an_dung,
+      question,
+    };
+  });
+}
+
+async function submitQuiz(isAutoSubmit = false) {
+  if (isSubmitted) return;
+
+  const selectedAnswers = getSelectedAnswers();
+
+  if (!isAutoSubmit && selectedAnswers.length < 10) {
     alert("Vui lòng chọn đủ 10 câu trước khi xác nhận.");
     return;
   }
 
   try {
-    submitBtn.disabled = true;
-    submitBtn.innerText = "Đang chấm điểm...";
+    isSubmitted = true;
+    stopQuizTimer();
 
-    const correctCount = selectedAnswers.filter((item) => item.la_dung).length;
+    submitBtn.disabled = true;
+    submitBtn.innerText = isAutoSubmit
+      ? "Hết giờ - đang nộp bài..."
+      : "Đang chấm điểm...";
+
+    const fullAnswers = getFullAnswers();
+
+    const correctCount = fullAnswers.filter((item) => item.la_dung).length;
     const wrongCount = 10 - correctCount;
     const resultStatus = correctCount >= 8 ? "dau" : "rot";
 
@@ -203,7 +284,7 @@ async function submitQuiz() {
 
     latestResultId = insertedResult[0].id;
 
-    const detailRows = selectedAnswers.map((item) => ({
+    const detailRows = fullAnswers.map((item) => ({
       id_bai_lam: latestResultId,
       id_cau_hoi: item.id_cau_hoi,
       dap_an_chon: item.dap_an_chon,
@@ -216,12 +297,15 @@ async function submitQuiz() {
       body: JSON.stringify(detailRows),
     });
 
+    submittedAnswers = fullAnswers;
+
     renderResult(correctCount, wrongCount, resultStatus);
 
     quizSection.classList.add("hidden");
     resultSection.classList.remove("hidden");
     window.scrollTo({ top: 0, behavior: "smooth" });
   } catch (error) {
+    isSubmitted = false;
     alert(error.message);
   } finally {
     submitBtn.disabled = false;
@@ -281,7 +365,7 @@ function renderResult(correctCount, wrongCount, resultStatus) {
 }
 
 function showDetail() {
-  const selectedAnswers = getSelectedAnswers();
+  const answers = submittedAnswers.length ? submittedAnswers : getFullAnswers();
 
   let html = `
     <div class="card">
@@ -289,7 +373,7 @@ function showDetail() {
       <p class="card-desc">Danh sách câu trả lời của ứng viên.</p>
   `;
 
-  selectedAnswers.forEach((item, index) => {
+  answers.forEach((item, index) => {
     html += `
       <div class="question-card">
         <div class="question-title">

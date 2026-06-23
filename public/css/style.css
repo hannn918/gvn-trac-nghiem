@@ -426,3 +426,44 @@ body {
   font-weight: 600;
   color: #173b29;
 }
+
+.quiz-timer-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1120px;
+  margin: 0 auto 20px;
+  padding: 14px 20px;
+  background: #ffffff;
+  border: 1px solid #dce9df;
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(18, 87, 44, 0.08);
+}
+
+.quiz-timer-label {
+  font-size: 15px;
+  font-weight: 700;
+  color: #244132;
+}
+
+.quiz-timer {
+  min-width: 92px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  background: #e9f8ed;
+  color: #13863e;
+  font-size: 24px;
+  font-weight: 800;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+.quiz-timer.warning {
+  background: #fff3d8;
+  color: #bd7200;
+}
+
+.quiz-timer.danger {
+  background: #ffe7e7;
+  color: #d63939;
+}

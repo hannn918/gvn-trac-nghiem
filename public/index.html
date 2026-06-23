@@ -6,15 +6,18 @@
   <title>Trắc nghiệm tuyển dụng - Giúp Việc Nhanh</title>
   <link rel="stylesheet" href="./css/style.css" />
 </head>
+
 <body>
-  <img class="brand-logo" src="./images/logo.png" alt="Giúp Việc Nhanh">
+  <img class="brand-logo" src="./images/logo.png" alt="Giúp Việc Nhanh" />
+
   <div class="app">
     <header class="header">
       <div>
         <p class="eyebrow">Giúp Việc Nhanh</p>
         <h1>BÀI TEST TUYỂN DỤNG</h1>
-        <p class="subtitle"> Đúng 8/10 là đậu.</p>
+        <p class="subtitle">Thời gian làm bài 10 phút. Đúng 8/10 là đậu.</p>
       </div>
+
       <div class="rule-box">
         <strong>Điều kiện</strong>
         <span>Đậu: ≥ 8 câu</span>
@@ -28,12 +31,13 @@
           <span>01</span>
           <div>
             <h2>Thông tin ứng viên</h2>
+            <p>Ứng viên nhập thông tin trước khi bắt đầu làm bài.</p>
           </div>
         </div>
 
         <form id="candidateForm" class="form-grid">
           <label>
-            Họ tên 
+            Họ tên
             <input type="text" id="hoTen" placeholder="Nhập họ tên" required />
           </label>
 
@@ -55,30 +59,29 @@
               <p>Chọn 1 đáp án cho mỗi câu rồi bấm xác nhận kết quả.</p>
             </div>
           </div>
-          <div class="progress-pill"><span id="answeredCount">0</span>/10 đã chọn</div>
+
+          <div class="quiz-status">
+            <div class="quiz-timer-wrap">
+              <span class="quiz-timer-label">Thời gian</span>
+              <strong id="quizTimer" class="quiz-timer">10:00</strong>
+            </div>
+
+            <div class="progress-pill">
+              <span id="answerCount">0</span>/10 đã chọn
+            </div>
+          </div>
         </div>
 
         <div id="questionList" class="question-list"></div>
 
         <div class="submit-bar">
-          <button id="submitBtn" class="primary-btn">Xác nhận kết quả</button>
+          <button id="submitBtn" class="primary-btn" type="button">
+            Xác nhận kết quả
+          </button>
         </div>
       </section>
 
-      <section id="resultSection" class="card result-card hidden">
-        <div id="resultBadge" class="result-badge">ĐẬU</div>
-        <h2 id="resultTitle">Kết quả bài làm</h2>
-        <p id="resultText"></p>
-        <div class="result-stats">
-          <div><strong id="correctText">0</strong><span>Câu đúng</span></div>
-          <div><strong id="wrongText">0</strong><span>Câu sai</span></div>
-          <div><strong id="scoreText">0</strong><span>Điểm</span></div>
-        </div>
-        <div class="result-actions">
-          <button id="retryBtn" class="primary-btn">Làm bài lần nữa</button>
-          <button id="detailBtn" class="secondary-btn">Xem chi tiết</button>
-        </div>
-      </section>
+      <section id="resultSection" class="card result-card hidden"></section>
 
       <section id="detailSection" class="card hidden">
         <div class="section-title">
@@ -88,11 +91,12 @@
             <p>Xem lại câu nào đúng, câu nào sai.</p>
           </div>
         </div>
+
         <div id="detailList" class="question-list"></div>
       </section>
     </main>
   </div>
 
-  <script src="/js/app.js"></script>
+  <script src="./js/app.js"></script>
 </body>
 </html>
