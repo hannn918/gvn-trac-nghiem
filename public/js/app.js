@@ -15,8 +15,6 @@ const candidateForm = document.getElementById("candidateForm");
 const questionList = document.getElementById("questionList");
 const submitBtn = document.getElementById("submitBtn");
 const answerCount = document.getElementById("answerCount");
-const retryBtn = document.getElementById("retryBtn");
-const detailBtn = document.getElementById("detailBtn");
 
 candidateForm.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -36,14 +34,6 @@ candidateForm.addEventListener("submit", async (event) => {
 
 submitBtn.addEventListener("click", submitQuiz);
 
-retryBtn.addEventListener("click", async () => {
-  resultSection.classList.add("hidden");
-  detailSection.classList.add("hidden");
-  await startQuiz();
-});
-
-detailBtn.addEventListener("click", showDetail);
-
 async function supabaseRequest(path, options = {}) {
   const response = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
     ...options,
@@ -57,11 +47,7 @@ async function supabaseRequest(path, options = {}) {
   });
 
   const text = await response.text();
-
-  let data = null;
-  if (text) {
-    data = JSON.parse(text);
-  }
+  const data = text ? JSON.parse(text) : null;
 
   if (!response.ok) {
     console.error("Supabase error:", data);
@@ -73,8 +59,9 @@ async function supabaseRequest(path, options = {}) {
 
 async function startQuiz() {
   try {
-    candidateForm.querySelector("button").disabled = true;
-    candidateForm.querySelector("button").innerText = "Đang tải câu hỏi...";
+    const startBtn = candidateForm.querySelector("button");
+    startBtn.disabled = true;
+    startBtn.innerText = "Đang tải câu hỏi...";
 
     const insertedCandidate = await supabaseRequest("ung_vien", {
       method: "POST",
@@ -103,8 +90,9 @@ async function startQuiz() {
   } catch (error) {
     alert(error.message);
   } finally {
-    candidateForm.querySelector("button").disabled = false;
-    candidateForm.querySelector("button").innerText = "Bắt đầu làm bài";
+    const startBtn = candidateForm.querySelector("button");
+    startBtn.disabled = false;
+    startBtn.innerText = "Bắt đầu làm bài";
   }
 }
 
@@ -133,8 +121,8 @@ function renderQuestions() {
   });
 
   if (answerCount) {
-  answerCount.innerText = "0/10 đã chọn";
-}
+    answerCount.innerText = "0/10 đã chọn";
+  }
 
   document.querySelectorAll(".answer-input").forEach((input) => {
     input.addEventListener("change", updateAnswerCount);
@@ -159,6 +147,7 @@ function renderAnswer(questionId, option, content) {
 
 function updateAnswerCount() {
   const selectedCount = getSelectedAnswers().length;
+
   if (answerCount) {
     answerCount.innerText = `${selectedCount}/10 đã chọn`;
   }
@@ -254,9 +243,11 @@ function renderResult(correctCount, wrongCount, resultStatus) {
       </h2>
 
       <p class="result-message">
-        ${isPass
-          ? "Chúc mừng, ứng viên đạt yêu cầu bài test."
-          : "Ứng viên chưa đạt yêu cầu. Có thể làm lại bài test."}
+        ${
+          isPass
+            ? "Chúc mừng, ứng viên đạt yêu cầu bài test."
+            : "Ứng viên chưa đạt yêu cầu. Có thể làm lại bài test."
+        }
       </p>
 
       <div class="result-stats">
@@ -277,8 +268,13 @@ function renderResult(correctCount, wrongCount, resultStatus) {
       </div>
 
       <div class="result-actions">
-        <button class="btn btn-secondary" onclick="showDetail()">Xem chi tiết</button>
-        <button class="btn btn-primary" onclick="location.reload()">Làm bài lần nữa</button>
+        <button class="btn btn-secondary" type="button" onclick="showDetail()">
+          Xem chi tiết
+        </button>
+
+        <button class="btn btn-primary" type="button" onclick="location.reload()">
+          Làm bài lần nữa
+        </button>
       </div>
     </div>
   `;
@@ -301,10 +297,18 @@ function showDetail() {
           <span>${item.question.noi_dung}</span>
         </div>
 
-        <p><strong>Đáp án đã chọn:</strong> ${item.dap_an_chon}</p>
-        <p><strong>Đáp án đúng:</strong> ${item.dap_an_dung}</p>
         <p>
-          <strong>Kết quả:</strong> 
+          <strong>Đáp án đã chọn:</strong>
+          ${formatAnswer(item.question, item.dap_an_chon)}
+        </p>
+
+        <p>
+          <strong>Đáp án đúng:</strong>
+          ${formatAnswer(item.question, item.dap_an_dung)}
+        </p>
+
+        <p>
+          <strong>Kết quả:</strong>
           <span style="color:${item.la_dung ? "#16803f" : "#d63939"}; font-weight:700;">
             ${item.la_dung ? "Đúng" : "Sai"}
           </span>
@@ -320,11 +324,21 @@ function showDetail() {
   detailSection.scrollIntoView({ behavior: "smooth" });
 }
 
+function formatAnswer(question, answerKey) {
+  if (!answerKey) return "Chưa chọn";
+
+  const key = `dap_an_${answerKey.toLowerCase()}`;
+  const content = question[key] || "";
+
+  return `<span class="answer-full-text">${answerKey}: ${content}</span>`;
+}
+
 function shuffleArray(array) {
   const copiedArray = [...array];
 
   for (let i = copiedArray.length - 1; i > 0; i--) {
     const randomIndex = Math.floor(Math.random() * (i + 1));
+
     [copiedArray[i], copiedArray[randomIndex]] = [
       copiedArray[randomIndex],
       copiedArray[i],

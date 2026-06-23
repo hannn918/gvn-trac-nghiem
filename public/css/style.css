@@ -421,3 +421,8 @@ body {
 #retryBtn:active {
   transform: translateY(0);
 }
+
+.answer-full-text {
+  font-weight: 600;
+  color: #173b29;
+}
