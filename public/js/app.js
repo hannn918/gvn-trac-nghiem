@@ -119,8 +119,9 @@ function startQuizTimer() {
       clearInterval(quizTimerInterval);
 
       if (!isSubmitted) {
-        alert("Đã hết 10 phút. Hệ thống sẽ tự động nộp bài.");
-        submitQuiz(true);
+       showModal("Hết thời gian", "Đã hết 10 phút. Hệ thống sẽ tự động nộp bài.", () => {
+       submitQuiz(true);
+      });
       }
     }
   }, 1000);
@@ -430,4 +431,23 @@ function shuffleArray(array) {
   }
 
   return copiedArray;
+}
+
+function showModal(title, message, onClose) {
+  const modal = document.getElementById("customModal");
+  const modalTitle = document.getElementById("modalTitle");
+  const modalMessage = document.getElementById("modalMessage");
+  const modalOkBtn = document.getElementById("modalOkBtn");
+
+  modalTitle.innerText = title;
+  modalMessage.innerText = message;
+  modal.classList.remove("hidden");
+
+  modalOkBtn.onclick = () => {
+    modal.classList.add("hidden");
+
+    if (typeof onClose === "function") {
+      onClose();
+    }
+  };
 }
