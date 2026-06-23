@@ -343,3 +343,31 @@ input:focus {
     padding: 22px;
   }
 }
+
+/* Logo góc trái */
+.brand-logo {
+  position: fixed;
+  top: 24px;
+  left: 28px;
+  width: 150px;
+  height: auto;
+  object-fit: contain;
+  z-index: 999;
+}
+
+/* Giữ toàn bộ box bài test ở giữa màn hình */
+body {
+  min-height: 100vh;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 24px;
+  box-sizing: border-box;
+}
+
+/* Box chính */
+.container {
+  width: min(100%, 1200px);
+  margin: 0 auto;
+}
